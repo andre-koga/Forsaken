@@ -1,11 +1,11 @@
-public abstract class PlayerBaseState 
-{  protected PlayerStateManager context;
-   protected PlayerStateFactory factory;
+public abstract class State 
+{  protected StateMachine context;
+   protected StateFactory factory;
 
-   public PlayerBaseState(PlayerStateManager currentContext, PlayerStateFactory playerFactory)
+   public State(StateMachine currentContext, StateFactory sFactory)
    {
       context = currentContext;
-      factory = playerFactory;
+      factory = sFactory;
    }
    public abstract void EnterState();
    public abstract void UpdateState();
@@ -13,7 +13,7 @@ public abstract class PlayerBaseState
    public abstract void CheckSwitchStates();
 
    void UpdateStates(){}
-   public void SwitchState(PlayerBaseState newState)
+   public void SwitchState(State newState)
    {
       ExitState();
       newState.EnterState();
