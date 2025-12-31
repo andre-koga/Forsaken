@@ -1,43 +1,49 @@
 using UnityEngine;
 
-public class PlayerRunState : PlayerBaseState
+public class PlayerRunState : State
 {
-    public PlayerRunState(PlayerStateManager currentContext, PlayerStateFactory playerFactory) : base(currentContext, playerFactory){}
+    private PlayerStateMachine playerContext;
+    private PlayerStateFactory playerFactory;
+    public PlayerRunState(PlayerStateMachine currentContext, PlayerStateFactory pFactory) : base(currentContext, pFactory)
+    {
+        playerContext = currentContext;
+        playerFactory = pFactory;
+    }
     public override void EnterState()
     {
-        context.PlayerAnimator.SetBool("isRunning", true);
-        context.AppliedMovementX = context.CurrentMovement.x * context.RunSpeed;
+        playerContext.Anim.SetBool("isRunning", true);
+        playerContext.AppliedMovementX = playerContext.CurrentMovementInput.x * playerContext.RunSpeed;
         
     }
     public override void UpdateState()
     {
-        context.AppliedMovementX = context.CurrentMovement.x * context.RunSpeed;
+        playerContext.AppliedMovementX = playerContext.CurrentMovementInput.x * playerContext.RunSpeed;
         
         CheckSwitchStates();
     }
     public override void ExitState()
     {
-        context.PlayerAnimator.SetBool("isRunning", false);
+        playerContext.Anim.SetBool("isRunning", false);
     }
 
     public override void CheckSwitchStates()
     {
-        if (context.IsHurt)
+        if (playerContext.IsHurt)
         {
-            SwitchState(factory.Hurt());
+            SwitchState(playerFactory.Hurt());
         }
-        else if (context.IsHitPressed)
+        else if (playerContext.IsHitPressed)
         {
-            SwitchState(factory.Slash());
-        } else if (context.Grounded && context.IsJumpPressed)
+            SwitchState(playerFactory.Attack());
+        } else if (playerContext.Grounded && playerContext.IsJumpPressed)
         {
-            SwitchState(factory.Jump());
-        }  else if (!context.IsMovementPressed)
+            SwitchState(playerFactory.Jump());
+        }  else if (!playerContext.IsMovementPressed)
         {
-            SwitchState(factory.Idle());
-        } else if (context.IsMovementPressed && !context.IsRunPressed)
+            SwitchState(playerFactory.Idle());
+        } else if (playerContext.IsMovementPressed && !playerContext.IsRunPressed)
         {   
-            SwitchState(factory.Walk());
+            SwitchState(playerFactory.Walk());
         }
     }
 }

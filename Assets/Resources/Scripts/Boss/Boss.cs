@@ -7,7 +7,7 @@ public class Boss : Enemy
     {
         if (other.gameObject.transform == player)
         {
-            player.gameObject.GetComponent<PlayerStateManager>().ApplyDamage(5);
+            player.gameObject.GetComponent<PlayerStateMachine>().ApplyDamage(5);
         }
     }
 

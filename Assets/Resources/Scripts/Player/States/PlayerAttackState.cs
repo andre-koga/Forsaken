@@ -1,20 +1,18 @@
 using UnityEngine;
 
-//fill this in after basic enemy is created
-public class PlayerHurtState : State
+public class PlayerAttackState : State
 {
     private PlayerStateMachine playerContext;
     private PlayerStateFactory playerFactory;
-    public PlayerHurtState(PlayerStateMachine currentContext, PlayerStateFactory pFactory) : base(currentContext, pFactory)
+    public PlayerAttackState(PlayerStateMachine currentContext, PlayerStateFactory pFactory) : base(currentContext, pFactory)
     {
         playerContext = currentContext;
         playerFactory = pFactory;
     }
     public override void EnterState()
     {
-        playerContext.Anim.SetBool("isHurt", true);
+        playerContext.Anim.SetBool("isAttacking", true);
         playerContext.AppliedMovementX = 0f;
-        playerContext.AppliedMovementY = 0f;
     }
     public override void UpdateState()
     {
@@ -22,21 +20,21 @@ public class PlayerHurtState : State
     }
     public override void ExitState()
     {
-        playerContext.Anim.SetBool("isHurt", false);
+        playerContext.Anim.SetBool("isAttacking", false);
     }
 
     public override void CheckSwitchStates()
     {
-        if (!playerContext.HurtFinished)
+        if (playerContext.IsHurt)
+        {
+            SwitchState(playerFactory.Hurt());
+        }
+        else if (!playerContext.AttackFinished)
         {
             return;
         }
-        playerContext.HurtFinished = false;
-        if (playerContext.IsHitPressed)
-        {
-            SwitchState(playerFactory.Attack());
-        }
-        else if (playerContext.IsMovementPressed && playerContext.IsRunPressed)
+        playerContext.AttackFinished = false; 
+        if (playerContext.IsMovementPressed && playerContext.IsRunPressed)
         {
             SwitchState(playerFactory.Run());
         } else if (playerContext.IsMovementPressed)

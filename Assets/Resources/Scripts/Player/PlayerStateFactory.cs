@@ -1,37 +1,37 @@
-public class PlayerStateFactory
+public class PlayerStateFactory : StateFactory
 {
-    PlayerStateManager context;
 
-    public PlayerStateFactory(PlayerStateManager currentContext)
+    PlayerStateMachine playerContext;
+    public PlayerStateFactory(PlayerStateMachine currentContext) : base((StateMachine)currentContext)
     {
-        context = currentContext;
+        playerContext = currentContext;
     }
-    public PlayerBaseState Idle()
+    public override State Idle()
     {
-        return new PlayerIdleState(context, this);
+        return new PlayerIdleState(playerContext, this);
     }
-    public PlayerBaseState Walk()
+    public override State Walk()
     {
-        return new PlayerWalkState(context, this);
+        return new PlayerWalkState(playerContext, this);
     }
-    public PlayerBaseState Run()
+    public State Run()
     {
-        return new PlayerRunState(context, this);
-    }
-
-    public PlayerBaseState Jump()
-    {
-        return new PlayerJumpState(context, this);
+        return new PlayerRunState(playerContext, this);
     }
 
-    public PlayerBaseState Slash()
+    public State Jump()
     {
-        return new PlayerSlashState(context, this);
+        return new PlayerJumpState(playerContext, this);
     }
 
-    public PlayerBaseState Hurt()
+    public override State Attack()
     {
-        return new PlayerHurtState(context, this);
+        return new PlayerAttackState(playerContext, this);
+    }
+
+    public override State Hurt()
+    {
+        return new PlayerHurtState(playerContext, this);
     }
 
 }

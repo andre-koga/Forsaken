@@ -1,68 +1,48 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
-public class PlayerStateManager : MonoBehaviour, IDamageable
+public class PlayerStateMachine : StateMachine, IDamageable
 {
     //control variables
-    [SerializeField] private float moveSpeed = 5f;
     [SerializeField] private float runSpeed = 7f;
 
-    //Game Objects
-    private Animator animator;
-    private Rigidbody2D player;
-    private Transform sprite;
-
     //player input system
-    PlayerInput playerInput;
-    Vector2 currentMovementInput;
-    Vector3 appliedMovement;
-    bool isMovementPressed;
-    bool isRunPressed;
-    bool isJumpPressed;
-    bool isHitPressed;
-    bool isHurt; 
-    bool slashFinished = false;
-    bool hurtFinished = false;
-    bool grounded = true;
+    private PlayerInput playerInput;
+    private Vector2 currentMovementInput;
+    private bool isMovementPressed;
+    private bool isRunPressed;
+    private bool isJumpPressed;
+    private bool isHitPressed;
+    private bool isHurt; 
+    private bool attackFinished = false;
+    private bool hurtFinished = false;
+    private bool grounded = true;
 
     //player info
     private int health;
     private float damageCooldown;
     private float canTakeDamage;
 
-    //States
-    PlayerBaseState currentState;
-    PlayerStateFactory states;
-
     //getters and settesr
-    public PlayerBaseState CurrentState {get {return currentState; } set {currentState = value;}}
-    public Animator PlayerAnimator {get {return animator;}}
-    public Transform Sprite {get {return sprite;}}
     public bool IsMovementPressed {get {return isMovementPressed;} set {isMovementPressed = value;}}
     public bool IsRunPressed {get {return isRunPressed;} set {isRunPressed = value;}}
     public bool IsJumpPressed {get {return isJumpPressed;} set {isJumpPressed = value;}}
     public bool IsHitPressed {get {return isHitPressed;} set {isHitPressed = value;}}
     public bool IsHurt{get {return isHurt;} set {isHurt = value;}}
-    public bool SlashFinished {get {return slashFinished; } set {slashFinished = value;}}
+    public bool AttackFinished {get {return attackFinished; } set {attackFinished = value;}}
     public bool HurtFinished {get {return hurtFinished; } set {hurtFinished = value;}}
     public bool Grounded {get {return grounded;} set {grounded = value;}}
-    public float AppliedMovementX {get {return appliedMovement.x;} set {appliedMovement.x = value;}}
-    public float AppliedMovementY {get {return appliedMovement.y;} set {appliedMovement.y = value;}}
-    public Vector2 CurrentMovement {get {return currentMovementInput;}}
+    public Vector2 CurrentMovementInput {get {return currentMovementInput;}}
     public float RunSpeed {get {return runSpeed;}}
-    public float MoveSpeed {get {return moveSpeed;}}
     public int Health {get {return health;} set {health = value;}}
     public float Cooldown {get {return damageCooldown;} set {damageCooldown = value;}}
 
-    void Awake()
+    protected override void Init()
     {
+        base.Init();
+
         //set reference variables
         playerInput = new PlayerInput();
-        player = GetComponent<Rigidbody2D>();
-        animator = GetComponentInChildren<Animator>();
-        sprite = transform.Find("sprite");
-        states = new PlayerStateFactory(this);
-        currentState = states.Idle();
-        currentState.EnterState();
+        factory = new PlayerStateFactory(this);
 
         //set player input callbacks
         playerInput.CharacterControls.Move.started += OnMovementPerformed;
@@ -77,22 +57,28 @@ public class PlayerStateManager : MonoBehaviour, IDamageable
 
         Health = 100;
         Cooldown = 1f;
-        canTakeDamage = 0f;
-    
+        canTakeDamage = 0f; 
     }
 
-    // Update is called once per frame
-    void Update()
+    protected override void EnterBeginningState()
+    {
+        currentState = factory.Idle();
+        currentState.EnterState();
+    }
+
+    protected override void UpdateState()
     {
         currentState.UpdateState();
-        player.linearVelocity = appliedMovement;
+        rb.linearVelocity = appliedMovement;
+    }
 
-
-        if (player.linearVelocity.x != 0)
-        {
-            sprite.localScale = new Vector3(Mathf.Sign(player.linearVelocity.x), 1, 1);
-        }
+    protected override void FaceMovement()
+    {
         
+        if (rb.linearVelocity.x != 0)
+        {
+            sprite.localScale = new Vector3(Mathf.Sign(rb.linearVelocity.x), 1, 1);
+        }
     }
 
     void OnMovementPerformed(InputAction.CallbackContext context)
@@ -142,7 +128,7 @@ public class PlayerStateManager : MonoBehaviour, IDamageable
             canTakeDamage = Time.time + Cooldown;
             Health -= damage;
             Debug.Log("Health: " + Health);
-            currentState.SwitchState(states.Hurt());
+            currentState.SwitchState(factory.Hurt());
         }
 
         if (Health <= 0f)
@@ -153,13 +139,13 @@ public class PlayerStateManager : MonoBehaviour, IDamageable
        
     }
 
-    void OnSlashAnimationStart()
+    void OnAttackAnimationStart()
     {
-        SlashFinished = false;
+        AttackFinished = false;
     }
-    void OnSlashAnimationFinish()
+    void OnAttackAnimationFinish()
     {
-        SlashFinished = true;
+        AttackFinished = true;
     }
 
     void OnHurtAnimationStart()
