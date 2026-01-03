@@ -1,0 +1,33 @@
+using UnityEngine;
+
+public class Bullet : MonoBehaviour
+{
+    [SerializeField] private float speed = 10f;
+    [SerializeField] private int damage = 10;
+    [SerializeField] private float lifetime = 5f;
+
+    private Rigidbody2D rb;
+
+    void Start()
+    {
+        rb = GetComponent<Rigidbody2D>();
+        if (rb != null)
+        {
+            rb.linearVelocity = transform.right * speed;
+        }
+        Destroy(gameObject, lifetime);
+    }
+
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        string layer = LayerMask.LayerToName(other.gameObject.layer);
+        if (layer == "Enemies")
+        {
+            IDamageable damageable = other.GetComponent<IDamageable>();
+            if (damageable != null)
+            {
+                damageable.ApplyDamage(damage);
+            }
+        }
+    }
+}

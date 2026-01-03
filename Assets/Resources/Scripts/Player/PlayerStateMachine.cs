@@ -4,8 +4,6 @@ public class PlayerStateMachine : StateMachine, IDamageable
 {
     //control variables
     [SerializeField] private  float runSpeed = 7f;
-    // [SerializeField] private GameObject projectilePrefab;
-    // [SerializeField] private Transform firePoint;
 
     //player input system
     private PlayerInput playerInput;
@@ -42,8 +40,6 @@ public class PlayerStateMachine : StateMachine, IDamageable
     public float RunSpeed {get {return runSpeed;}}
     public int Health {get {return health;} set {health = value;}}
     public float Cooldown {get {return damageCooldown;} set {damageCooldown = value;}}
-    // public GameObject ProjectilePrefab {get {return projectilePrefab;}}
-    // public Transform FirePoint {get {return firePoint;}}
 
     protected override void Init()
     {
@@ -164,12 +160,10 @@ public class PlayerStateMachine : StateMachine, IDamageable
 
     void OnShootAnimationStart()
     {
-        Debug.Log("Shoot animation started");
         ShootFinished = false;
     }
     void OnShootAnimationFinish()
     {
-        Debug.Log("Shoot animation finished");
         ShootFinished = true;
     }
 

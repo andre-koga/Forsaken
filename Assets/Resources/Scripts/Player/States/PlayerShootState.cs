@@ -12,11 +12,14 @@ public class PlayerShootState : State
         playerContext.Anim.SetTrigger("Shoot");
         playerContext.AppliedMovementX = 0f;
         playerContext.AppliedMovementY = 0f;
-        // // Trigger shoot logic: Instantiate projectile (add this)
-        // if (playerContext.ProjectilePrefab != null && playerContext.FirePoint != null)
-        // {
-        //     Instantiate(playerContext.ProjectilePrefab, playerContext.FirePoint.position, playerContext.FirePoint.rotation);
-        // }
+        playerContext.IsShootPressed = false;  // Reset to prevent continuous shooting
+
+        // Call Shoot on the ranged weapon
+        Player_Ranged rangedWeapon = playerContext.GetComponentInChildren<Player_Ranged>();
+        if (rangedWeapon != null)
+        {
+            rangedWeapon.Shoot();
+        }
     }
     public override void UpdateState()
     {
