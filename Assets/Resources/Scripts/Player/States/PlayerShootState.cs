@@ -14,15 +14,16 @@ public class PlayerShootState : State
         playerContext.AppliedMovementY = 0f;
         playerContext.IsShootPressed = false;  // Reset to prevent continuous shooting
 
-        // Call Shoot on the ranged weapon
-        Player_Ranged rangedWeapon = playerContext.GetComponentInChildren<Player_Ranged>();
-        if (rangedWeapon != null)
-        {
-            rangedWeapon.Shoot();
-        }
     }
     public override void UpdateState()
     {
+        // Call Shoot on the ranged weapon
+        Player_Ranged rangedWeapon = playerContext.GetComponentInChildren<Player_Ranged>();
+        if (rangedWeapon != null && playerContext.ShootStarted)
+        {
+            rangedWeapon.Shoot();
+            playerContext.ShootStarted = false;
+        }
         CheckSwitchStates();
     }
     public override void ExitState()

@@ -15,6 +15,7 @@ public class PlayerStateMachine : StateMachine, IDamageable
     private bool isShootPressed;
     private bool isHurt; 
     private bool attackFinished = false;
+    private bool shootStarted = false;
     private bool shootFinished = false;
     private bool hurtFinished = false;
     private bool grounded = true;
@@ -32,6 +33,7 @@ public class PlayerStateMachine : StateMachine, IDamageable
     public bool IsShootPressed {get {return isShootPressed;} set {isShootPressed = value;}}
     public bool IsHurt{get {return isHurt;} set {isHurt = value;}}
     public bool AttackFinished {get {return attackFinished; } set {attackFinished = value;}}
+    public bool ShootStarted {get {return shootStarted; } set {shootStarted = value;}}
     public bool ShootFinished {get {return shootFinished; } set {shootFinished = value;}}
 
     public bool HurtFinished {get {return hurtFinished; } set {hurtFinished = value;}}
@@ -162,9 +164,14 @@ public class PlayerStateMachine : StateMachine, IDamageable
     {
         ShootFinished = false;
     }
+    void TriggerBulletShooting()
+    {
+        ShootStarted = true;
+    }
     void OnShootAnimationFinish()
     {
         ShootFinished = true;
+        ShootStarted = false;
     }
 
     void OnHurtAnimationStart()
