@@ -3,11 +3,16 @@ public class BossStateMachine : StateMachine, IDamageable
 {
     [SerializeField] private  float targetDistance;
     [SerializeField] private  float timeInIdle;
+    
     [SerializeField] private  int numStages;
     [SerializeField] private  int damage;
     [SerializeField] private float damageCooldown;
+
+    [Header("Grapple Settings")]
+    [SerializeField] private float grappleTargetDistance;
     [SerializeField] private float grappleDuration;
     [SerializeField] private float grappleSpeed;
+
     private int currentStage = 1;
     private bool isFlipped = false;
     private bool isHurt = false; 
@@ -33,6 +38,7 @@ public class BossStateMachine : StateMachine, IDamageable
     public float TargetDistance {get {return targetDistance;}}
     public float GrappleDuration {get {return grappleDuration;}}
     public float GrappleSpeed {get {return grappleSpeed;}}
+    public float GrappleTargetDistance {get {return grappleTargetDistance;}}
     public int CurrentStage {get {return currentStage;} set {currentStage = value;}}
 
     protected override void Init()
@@ -111,5 +117,8 @@ public class BossStateMachine : StateMachine, IDamageable
         return Vector3.Distance(transform.position,Player.transform.position) <= TargetDistance;
     }
 
-
+    public bool GrappleInRange()
+    {
+        return Vector2.Distance(transform.position, Player.transform.position) > GrappleTargetDistance;
+    }
 }

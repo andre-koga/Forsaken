@@ -12,9 +12,8 @@ public class StageTwo : State
     }
     public override void InitializeSubStates()
     {
-        if (bossContext.GrapplingFinished == 1)
+        if (bossContext.GrappleInRange())
         {
-            Debug.Log("Setting Grapple State");
             SetSubState(new BossGrappleState(bossContext));
         }
         else if (bossContext.IsHurt)

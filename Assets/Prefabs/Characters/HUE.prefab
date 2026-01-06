@@ -2368,13 +2368,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 5
-  targetDistance: 0
-  timeInIdle: 0
-  numStages: 0
-  damage: 0
-  damageCooldown: 0
-  grappleDuration: 0
-  grappleSpeed: 0
+  targetDistance: 3
+  timeInIdle: 0.75
+  numStages: 2
+  damage: 5
+  damageCooldown: 1
+  grappleTargetDistance: 7
+  grappleDuration: 0.5
+  grappleSpeed: 10
 --- !u!1 &6265291377657470592
 GameObject:
   m_ObjectHideFlags: 0

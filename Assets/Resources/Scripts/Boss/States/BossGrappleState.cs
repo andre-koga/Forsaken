@@ -5,6 +5,7 @@ public class BossGrappleState : State
 {
     private BossStateMachine bossContext;
     private LineRenderer lineRenderer;
+    private Transform chainStart;
 
     public BossGrappleState(BossStateMachine currentContext) : base(currentContext)
     {
@@ -13,7 +14,8 @@ public class BossGrappleState : State
 
     public override void EnterState()
     {
-        Debug.Log("BOSS: Entering Grapple State");
+        bossContext.Anim.Play("Grapple");
+
         lineRenderer = bossContext.GetComponentInChildren<LineRenderer>();
         if (lineRenderer == null)
         {
@@ -21,8 +23,9 @@ public class BossGrappleState : State
             SwitchState(new BossIdleState(bossContext));
             return;
         }
-
         lineRenderer.enabled = true;
+        chainStart = lineRenderer.transform;
+
         bossContext.StartCoroutine(AnimateGrapple());
     }
 
@@ -41,7 +44,7 @@ public class BossGrappleState : State
         {
             SwitchState(new BossHurtState(bossContext));
         }
-        else if (bossContext.GrapplingFinished == 0)
+        else if (bossContext.GrapplingFinished == 1)
         {
             SwitchState(new BossAttackState(bossContext));
         }
@@ -52,25 +55,26 @@ public class BossGrappleState : State
         float elapsed = 0f;
         float duration = bossContext.GrappleDuration;
         float stopDistance = 2f;
-        Vector3 bossCenter;
         Vector3 playerCenter;
 
+        // The throwing of the chain
         while (elapsed < duration)
         {
             elapsed += Time.deltaTime;
             float percent = elapsed / duration;
 
-            bossCenter = bossContext.GetComponent<Collider2D>().bounds.center;
+            // bossCenter = bossContext.GetComponent<Collider2D>().bounds.center;
             playerCenter = bossContext.Player.GetComponent<Collider2D>().bounds.center;
 
-            Vector3 chainTip = Vector3.Lerp(bossCenter, playerCenter, percent);
+            Vector3 chainTip = Vector3.Lerp(chainStart.position, playerCenter, percent);
 
-            lineRenderer.SetPosition(0, bossCenter);
+            lineRenderer.SetPosition(0, chainStart.position);
             lineRenderer.SetPosition(1, chainTip);
 
             yield return null;
         }
 
+        // The pulling of the boss towards the player
         while (Vector3.Distance(bossContext.transform.position, bossContext.Player.transform.position) > stopDistance)
         {
             lineRenderer.SetPosition(0, bossContext.GetComponent<Collider2D>().bounds.center);
@@ -80,7 +84,7 @@ public class BossGrappleState : State
         }
 
         lineRenderer.enabled = false;
-        bossContext.GrapplingFinished = 0;
+        bossContext.GrapplingFinished = 1;
     }
 
 }

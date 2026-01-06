@@ -30,10 +30,6 @@ public class BossIdleState : State
         {
             if (bossContext.CurrentStage == 1)
             {
-                if (Random.value < 0.5f)
-                {
-                    bossContext.GrapplingFinished = 1;
-                }
                 SwitchState(new StageOne(bossContext));
             }
             else if (bossContext.CurrentStage == 2)
