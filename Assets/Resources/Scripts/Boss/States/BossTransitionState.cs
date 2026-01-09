@@ -6,7 +6,6 @@ public class BossTransitionState : State
     {
         bossContext = currentContext;
         isBaseState = true;
-        bossContext.IsHurt = false;
     }
     public override void EnterState()
     {   
@@ -40,7 +39,17 @@ public class BossTransitionState : State
     {
         if (bossContext.IntroFinished == 1)
         {
-            SwitchState(new BossIdleState(bossContext));
+            if (bossContext.CurrentStage == 1)
+            {
+                SwitchState(new StageOne(bossContext));
+            }
+            else if (bossContext.CurrentStage == 2)
+            {
+                SwitchState(new StageTwo(bossContext));
+            } else if (bossContext.CurrentStage == 3)
+            {
+                SwitchState(new StageThree(bossContext));
+            }
         }
     }
 }
