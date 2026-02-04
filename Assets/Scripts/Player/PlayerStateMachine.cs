@@ -138,7 +138,6 @@ public class PlayerStateMachine : StateMachine, IDamageable
 
     protected override void FaceMovement()
     {
-        
         if (rb.linearVelocity.x != 0)
         {
             sprite.localScale = new Vector3(Mathf.Sign(rb.linearVelocity.x), 1, 1);
@@ -270,7 +269,6 @@ public class PlayerStateMachine : StateMachine, IDamageable
     //ability 3 is dashing
     public void UnlockAbility(int abilityNum)
     {
-        Debug.Log("unlocking");
         if (abilityNum == 2)
         {
             shootUnlocked = true;
