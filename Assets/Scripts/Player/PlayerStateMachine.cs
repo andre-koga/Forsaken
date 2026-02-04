@@ -14,6 +14,7 @@ public class PlayerStateMachine : StateMachine, IDamageable
 
     [Header("Object References")]
     [SerializeField] private GameManager manager;
+    [SerializeField] private BoxCollider2D swordHitbox;
     [SerializeField] private TextMeshProUGUI healthBar;
     [SerializeField] private TextMeshProUGUI dashBar;
     [SerializeField] private GameObject shootIcon;
@@ -92,7 +93,7 @@ public class PlayerStateMachine : StateMachine, IDamageable
         playerInput = new PlayerInput();
         dashTrail = transform.Find("ghost trail").gameObject;
         groundCheck = transform.Find("groundedCheck");
-
+        swordHitbox = sprite.Find("sword").GetComponent<BoxCollider2D>();
         //set player input callbacks
         playerInput.CharacterControls.Move.started += OnMovementPerformed;
         playerInput.CharacterControls.Move.canceled += OnMovementCancelled;
@@ -216,12 +217,14 @@ public class PlayerStateMachine : StateMachine, IDamageable
     void OnAttackAnimationStart()
     {
         AttackFinished = false;
+        swordHitbox.enabled = true;
 
     }
 
     void OnAttackAnimationFinish()
     {
         AttackFinished = true;
+        swordHitbox.enabled = false;
     }
 
     void OnShootAnimationStart()
